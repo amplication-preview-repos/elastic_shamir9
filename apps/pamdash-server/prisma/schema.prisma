@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  contactInformation      ContactInformation?
+  createdAt               DateTime                 @default(now())
+  email                   String                   @unique
+  firstName               String?
+  id                      String                   @id @default(cuid())
+  lastName                String?
+  password                String
+  personalInformation     PersonalInformation?
+  roles                   Json
+  signUpCredentials       String?
+  updatedAt               DateTime                 @updatedAt
+  username                String                   @unique
+  verificationInformation VerificationInformation?
+}
+
+model ContactInformation {
+  createdAt          DateTime @default(now())
+  id                 String   @id @default(cuid())
+  lga                String
+  lgaOfResidence     String
+  phoneNumber        String
+  residentialAddress String
+  stateOfOrigin      String
+  stateOfResidence   String
+  updatedAt          DateTime @updatedAt
+  users              User?    @relation(fields: [usersId], references: [id])
+  usersId            String?  @unique
+}
+
+model PersonalInformation {
+  createdAt   DateTime                      @default(now())
+  dateOfBirth DateTime
+  firstName   String
+  gender      EnumPersonalInformationGender
+  id          String                        @id @default(cuid())
+  lastName    String
+  middleName  String?
+  nin         String
+  updatedAt   DateTime                      @updatedAt
+  user        User?                         @relation(fields: [userId], references: [id])
+  userId      String?                       @unique
+}
+
+model VerificationInformation {
+  cacDocument            String
+  countryOfIncorporation String
+  createdAt              DateTime @default(now())
+  currentOccupation      String?
+  dateOfExpiry           DateTime
+  dateOfIssue            DateTime
+  id                     String   @id @default(cuid())
+  identificationDocument String
+  identificationNumber   String
+  organisationAddress    String
+  organisationName       String
+  placeOfIssue           String
+  position               String
+  registrationNumber     String
+  updatedAt              DateTime @updatedAt
+  user                   User?    @relation(fields: [userId], references: [id])
+  userId                 String?  @unique
+}
+
+enum EnumPersonalInformationGender {
+  Male
+  Female
+}
